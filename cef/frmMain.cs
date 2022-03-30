@@ -24,7 +24,7 @@ namespace cef
         string ignoreUrl = "";
         private void frmMain_Load(object sender, EventArgs e)
         {
-            browser = new ChromiumWebBrowser("dshfkje");
+            browser = new ChromiumWebBrowser("https://google.pl");
             browser.Dock= DockStyle.Fill;
             this.panelRender.Controls.Add(browser);
             browser.LoadError += Browser_LoadError;
