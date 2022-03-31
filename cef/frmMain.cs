@@ -37,15 +37,15 @@ namespace cef
         {
             if (ignoreUrl=="")
             {
-                loadUrl(e.Address);
+                EmulateUrl(e.Address);
             }
             else
             {
-                loadUrl(ignoreUrl);
+                EmulateUrl(ignoreUrl);
                 ignoreUrl = "";
             }
         }
-        private void loadUrl(string url)
+        private void EmulateUrl(string url)
         {
             txtUrl.Invoke(new Action(delegate ()
             {
@@ -63,19 +63,53 @@ namespace cef
 
         private void Browser_LoadError(object sender, CefSharp.LoadErrorEventArgs e)
         {
-            using(StreamReader sr = new StreamReader(AppDomain.CurrentDomain.BaseDirectory+@"\pages\err.html"))
+            if (e.ErrorText == "ERR_ABORTED")
             {
-                String content = sr.ReadToEnd();
-                content = content.Replace("ERR", e.ErrorText);
-                content = content.Replace("URL", e.FailedUrl);
-                ignoreUrl = e.ErrorText;
-                browser.LoadHtml(content);
+                browser.Back();
+            }
+            else
+            {
+                using (StreamReader sr = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + @"\pages\err.html"))
+                {
+                    String content = sr.ReadToEnd();
+                    content = content.Replace("ERR", e.ErrorText);
+                    content = content.Replace("URL", e.FailedUrl);
+                    ignoreUrl = e.ErrorText;
+                    browser.LoadHtml(content);
+                }
             }
         }
 
+        private void LoadUrl(string url)
+        {
+            browser.Load(url);
+        }
         private void btnLoad_Click(object sender, EventArgs e)
         {
-            browser.Load(txtUrl.Text);
+            LoadUrl(txtUrl.Text);
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            if (browser.CanGoBack)
+            {
+                browser.Back();
+            }
+        }
+
+        private void btnForwoard_Click(object sender, EventArgs e)
+        {
+            if (browser.CanGoForward)
+            {
+                browser.Forward();
+            }
+        }
+        private void txtUrl_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                LoadUrl(txtUrl.Text);
+            }
         }
     }
 }
