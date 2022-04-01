@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CefSharp;
+using CefSharp.WinForms;
 using EasyTabs;
 
 namespace cef
@@ -16,6 +18,14 @@ namespace cef
         public main()
         {
             InitializeComponent();
+            var settings = new CefSettings();
+
+            settings.RegisterScheme(new CefCustomScheme
+            {
+                SchemeName = InternalProtocolFactory.SchemeName,
+                SchemeHandlerFactory = new InternalProtocolFactory()
+            });
+            Cef.Initialize(settings);
             AeroPeekEnabled = true;
             TabRenderer = new ChromeTabRenderer(this);
         }

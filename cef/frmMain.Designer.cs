@@ -33,14 +33,15 @@
             this.panelRender = new System.Windows.Forms.Panel();
             this.btnBack = new System.Windows.Forms.Button();
             this.btnForwoard = new System.Windows.Forms.Button();
+            this.btnReload = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtUrl
             // 
             this.txtUrl.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtUrl.Location = new System.Drawing.Point(78, 12);
+            this.txtUrl.Location = new System.Drawing.Point(111, 12);
             this.txtUrl.Name = "txtUrl";
-            this.txtUrl.Size = new System.Drawing.Size(672, 20);
+            this.txtUrl.Size = new System.Drawing.Size(639, 20);
             this.txtUrl.TabIndex = 0;
             this.txtUrl.Text = "https://google.pl";
             this.txtUrl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtUrl_KeyDown);
@@ -76,7 +77,7 @@
             // 
             // btnForwoard
             // 
-            this.btnForwoard.Location = new System.Drawing.Point(45, 12);
+            this.btnForwoard.Location = new System.Drawing.Point(78, 12);
             this.btnForwoard.Name = "btnForwoard";
             this.btnForwoard.Size = new System.Drawing.Size(27, 23);
             this.btnForwoard.TabIndex = 0;
@@ -84,11 +85,22 @@
             this.btnForwoard.UseVisualStyleBackColor = true;
             this.btnForwoard.Click += new System.EventHandler(this.btnForwoard_Click);
             // 
+            // btnReload
+            // 
+            this.btnReload.Location = new System.Drawing.Point(45, 12);
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(27, 23);
+            this.btnReload.TabIndex = 1;
+            this.btnReload.Text = "↻";
+            this.btnReload.UseVisualStyleBackColor = true;
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnReload);
             this.Controls.Add(this.btnForwoard);
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.panelRender);
@@ -102,6 +114,8 @@
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.Button btnReload;
 
         private System.Windows.Forms.Button btnForwoard;
 

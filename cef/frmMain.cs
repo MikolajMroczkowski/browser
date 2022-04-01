@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Data.SQLite;
 namespace cef
 {
     public partial class frmMain : Form
@@ -22,17 +22,36 @@ namespace cef
         }
         ChromiumWebBrowser browser;
         string ignoreUrl = "";
+        string cs = $@"URI=file:{AppDomain.CurrentDomain.BaseDirectory}\browser.db";
         private void frmMain_Load(object sender, EventArgs e)
         {
-            browser = new ChromiumWebBrowser("https://google.pl");
+            var con = new SQLiteConnection(cs);
+            con.Open();
+            var cmd = new SQLiteCommand(con);
+            cmd.CommandText = "create table IF NOT EXISTS history (url text,title text,lastVisit INTEGER DEFAULT(datetime('now')));";
+            cmd.ExecuteNonQuery();
+            con.Close();
+            browser = new ChromiumWebBrowser("browser://history");
             browser.Dock= DockStyle.Fill;
             this.panelRender.Controls.Add(browser);
             browser.LoadError += Browser_LoadError;
             browser.TitleChanged += Browser_TitleChanged;
             browser.AddressChanged += Browser_AddressChanged;
-            
+            browser.LoadingStateChanged += Browser_LoadingStateChanged;
         }
-
+        
+        private void Browser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
+        {
+            string icon = "↻";
+            if (e.IsLoading)
+            {
+                icon = "x";
+            }
+            btnReload.Invoke(new Action(delegate ()
+            {
+                btnReload.Text = icon;
+            }));
+        }
         private void Browser_AddressChanged(object sender, AddressChangedEventArgs e)
         {
             if (ignoreUrl=="")
@@ -44,6 +63,16 @@ namespace cef
                 EmulateUrl(ignoreUrl);
                 ignoreUrl = "";
             }
+            var con = new SQLiteConnection(cs);
+            con.Open();
+            var cmd = new SQLiteCommand(con);
+            cmd.CommandText = "INSERT INTO history(title, url) VALUES(@title, @url)";
+            cmd.Parameters.AddWithValue("@title", this.Text);
+            cmd.Parameters.AddWithValue("@url", e.Address);
+            cmd.Prepare();
+            cmd.ExecuteNonQuery();
+            con.Close();
+
         }
         private void EmulateUrl(string url)
         {
@@ -82,7 +111,9 @@ namespace cef
 
         private void LoadUrl(string url)
         {
-            browser.Load(url);
+            
+            browser.Load(url); 
+            
         }
         private void btnLoad_Click(object sender, EventArgs e)
         {
@@ -110,6 +141,19 @@ namespace cef
             {
                 LoadUrl(txtUrl.Text);
             }
+        }
+
+        private void btnReload_Click(object sender, EventArgs e)
+        {
+            if (browser.IsLoading)
+            {
+                browser.Stop();
+            }
+            else
+            {
+                browser.Reload();
+            }
+            
         }
     }
 }
