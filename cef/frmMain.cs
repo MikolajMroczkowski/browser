@@ -63,15 +63,19 @@ namespace cef
                 EmulateUrl(ignoreUrl);
                 ignoreUrl = "";
             }
-            var con = new SQLiteConnection(cs);
-            con.Open();
-            var cmd = new SQLiteCommand(con);
-            cmd.CommandText = "INSERT INTO history(title, url) VALUES(@title, @url)";
-            cmd.Parameters.AddWithValue("@title", this.Text);
-            cmd.Parameters.AddWithValue("@url", e.Address);
-            cmd.Prepare();
-            cmd.ExecuteNonQuery();
-            con.Close();
+
+            if (!e.Address.Contains("browser://"))
+            {
+                var con = new SQLiteConnection(cs);
+                con.Open();
+                var cmd = new SQLiteCommand(con);
+                cmd.CommandText = "INSERT INTO history(title, url) VALUES(@title, @url)";
+                cmd.Parameters.AddWithValue("@title", this.Text);
+                cmd.Parameters.AddWithValue("@url", e.Address);
+                cmd.Prepare();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
 
         }
         private void EmulateUrl(string url)
